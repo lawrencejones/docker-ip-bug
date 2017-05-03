@@ -17,7 +17,7 @@ def running_containers
 end
 
 def docker_kill(*containers)
-  docker("kill #{containers.join(' ')}") if containers.count > 0
+  containers.map { |c| Thread.new { docker("kill #{c}") } }.each(&:join)
 end
 
 def docker_inspect(*containers)
@@ -60,14 +60,14 @@ end
 
 batch_size = 50
 
-until collisions = container_collisions.any?
+until container_collisions.any?
   log("No collisions, killing running...")
   docker_kill(*running_containers)
 
   log("Starting new batch of #{batch_size}...")
-  batch_size.times { docker_run }
+  batch_size.times.map { Thread.new { docker_run } }.each(&:join)
 
   wait_until_healthcheck
 end
 
-puts(JSON.pretty_generate(collisions))
+puts(JSON.pretty_generate(container_collisions))
