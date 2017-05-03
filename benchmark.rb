@@ -33,6 +33,12 @@ def docker_inspect(*containers)
   end
 end
 
+def docker_build(tag = 'busy-spin-then-netcat')
+  build_tag = docker("build -t #{tag} .").match(/Successfully built (\w+)/)[1]
+  raise 'failed build' unless build_tag
+  build_tag
+end
+
 def docker_run(image = 'busy-spin-then-netcat')
   docker("run -P -d #{image}")
 end
@@ -43,22 +49,8 @@ def container_collisions
     select { |ip, containers| containers.size > 1 }
 end
 
-def wait_until_healthcheck
-  containers = docker_inspect(*running_containers)
-  while containers.any?
-    sleep 1
-    log("#{containers.count} containers pending health check...")
-    containers.each do |container|
-      if `timeout 1 nc localhost #{container[:port]}`.strip == 'done'
-        containers -= [container]
-      end
-    end
-  end
-
-  log("All containers health checked!")
-end
-
-batch_size = 50
+batch_size = ARGV.first.to_i
+log("Successfully build #{docker_build}")
 
 until container_collisions.any?
   log("No collisions, killing running...")
@@ -66,8 +58,6 @@ until container_collisions.any?
 
   log("Starting new batch of #{batch_size}...")
   batch_size.times.map { Thread.new { docker_run } }.each(&:join)
-
-  wait_until_healthcheck
 end
 
 puts(JSON.pretty_generate(container_collisions))
