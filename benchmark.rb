@@ -26,6 +26,7 @@ def docker_inspect(*containers)
   JSON.parse(docker("inspect #{containers.join(' ')}")).map do |container|
     {
       container_id: container['Id'],
+      name: container['Name'],
       created_at: container['Created'],
       port: container['NetworkSettings']['Ports']['8080/tcp'][0]['HostPort'],
       ip_address: container['NetworkSettings']['IPAddress'],

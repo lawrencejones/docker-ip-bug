@@ -22,12 +22,14 @@ root@vagrant-ubuntu-trusty-64:/data# ./benchmark.rb 50 | tee -a tmp tmp/benchmar
   "172.17.0.17": [
     {
       "container_id": "7411bbdfef58425956dbf009d8182d7fba644495c80aa172aba228839f47d467",
+      "name": "/small_davinci7",
       "created_at": "2017-05-03T17:36:48.933263081Z",
       "port": "40884",
       "ip_address": "172.17.0.17"
     },
     {
       "container_id": "176dddd151b9607599990d5b4607d55f0f9b2d3f9963c104a390d413b9391b0e",
+      "name": "/trusting_davinci",
       "created_at": "2017-05-03T17:36:48.933102548Z",
       "port": "40888",
       "ip_address": "172.17.0.17"
@@ -36,12 +38,14 @@ root@vagrant-ubuntu-trusty-64:/data# ./benchmark.rb 50 | tee -a tmp tmp/benchmar
   "172.17.0.16": [
     {
       "container_id": "7fc5c4384ba7826ab92292bf40c4ee481b34f7913128f85f1c0041145c1fa566",
+      "name": "/cranky_shockley0",
       "created_at": "2017-05-03T17:36:48.932370799Z",
       "port": "40887",
       "ip_address": "172.17.0.16"
     },
     {
       "container_id": "8ea82967e550ce076cc40802b2064942222805cfe00269629be37fdea3dc6a79",
+      "name": "/prickly_spence",
       "created_at": "2017-05-03T17:36:48.922545985Z",
       "port": "40892",
       "ip_address": "172.17.0.16"
@@ -49,3 +53,8 @@ root@vagrant-ubuntu-trusty-64:/data# ./benchmark.rb 50 | tee -a tmp tmp/benchmar
   ]
 }
 ```
+
+## Docker logs
+
+What we see in the logs are racing requests for addresses, which cause multiple
+containers to receive the same address.
