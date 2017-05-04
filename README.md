@@ -57,4 +57,22 @@ root@vagrant-ubuntu-trusty-64:/data# ./benchmark.rb 50 | tee -a tmp tmp/benchmar
 ## Docker logs
 
 What we see in the logs are racing requests for addresses, which cause multiple
-containers to receive the same address.
+containers to receive the same address. With debug logging, we see:
+
+```
+root@vagrant-ubuntu-trusty-64:/var/log/upstart# grep '2017-05-03T17:36' /var/log/upstart/docker.log
+time="2017-05-03T17:36:40.406182314Z" level=debug msg="ReleaseAddress(LocalDefault/172.17.0.0/16, 172.17.0.16)"
+time="2017-05-03T17:36:40.564513449Z" level=debug msg="ReleaseAddress(LocalDefault/172.17.0.0/16, 172.17.0.17)"
+time="2017-05-03T17:36:53.225655932Z" level=debug msg="Assigning addresses for endpoint cranky_shockley0's interface on network bridge"
+time="2017-05-03T17:36:53.230230667Z" level=debug msg="Assigning addresses for endpoint prickly_spence's interface on network bridge"
+time="2017-05-03T17:36:53.230297294Z" level=debug msg="Assigning addresses for endpoint trusting_davinci's interface on network bridge"
+time="2017-05-03T17:36:53.230449113Z" level=debug msg="Assigning addresses for endpoint small_davinci7's interface on network bridge"
+time="2017-05-03T17:36:55.977897343Z" level=debug msg="Assigning addresses for endpoint cranky_shockley0's interface on network bridge"
+time="2017-05-03T17:36:56.118899633Z" level=debug msg="Assigning addresses for endpoint prickly_spence's interface on network bridge"
+time="2017-05-03T17:36:56.203361531Z" level=debug msg="Assigning addresses for endpoint small_davinci7's interface on network bridge"
+time="2017-05-03T17:36:56.295963372Z" level=debug msg="Assigning addresses for endpoint trusting_davinci's interface on network bridge"
+time="2017-05-03T17:37:00.010042599Z" level=debug msg="Programming external connectivity on endpoint small_davinci7 (85d1e002ac98503343037a29d7947c6b5386ca48e422f6763bda171a1a1f7241)"
+time="2017-05-03T17:37:00.385010449Z" level=debug msg="Programming external connectivity on endpoint cranky_shockley0 (0697a4b94b2ef40bf95cb81e9c172be918a18a21f49ab27ff40a76135589ef58)"
+time="2017-05-03T17:37:00.418262126Z" level=debug msg="Programming external connectivity on endpoint trusting_davinci (6c0aa2f8475fc126354135088919cab2af0d5116def108287140197f7959ec5f)"
+time="2017-05-03T17:37:00.676598484Z" level=debug msg="Programming external connectivity on endpoint prickly_spence (5203a868543bd417a8ae0701f3988c37b177681638f9012fa9cc00ed23ad8036)"
+```
