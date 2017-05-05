@@ -12,3 +12,9 @@ apt-get update
 
 apt-get install -y "docker-engine=$DOCKER_VERSION"
 update-grub
+
+echo "DOCKER_OPTS='--bip=172.17.0.1/16 --dns=172.17.0.1 --host=unix:///var/run/docker.sock --iptables=false '" > /etc/default/docker && service docker restart
+
+apt-get install -y linux-image-generic-lts-zesty
+
+echo "** New kernel installed. You need to restart this VM! **"

@@ -16,8 +16,16 @@ def running_containers
   docker('ps -q').strip.lines.map(&:strip)
 end
 
+def exited_containers
+  docker('ps -q --filter=status=exited').strip.lines.map(&:strip)
+end
+
 def docker_kill(*containers)
   containers.map { |c| Thread.new { docker("kill #{c}") } }.each(&:join)
+end
+
+def docker_rm(*containers)
+  containers.map { |c| Thread.new { docker("rm #{c}") } }.each(&:join)
 end
 
 def docker_inspect(*containers)
@@ -56,6 +64,7 @@ log("Successfully build #{docker_build}")
 until container_collisions.any?
   log("No collisions, killing running...")
   docker_kill(*running_containers)
+  docker_rm(*exited_containers)
 
   log("Starting new batch of #{batch_size}...")
   batch_size.times.map { Thread.new { docker_run } }.each(&:join)
